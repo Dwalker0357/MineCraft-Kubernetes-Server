@@ -19,5 +19,7 @@ gcloud container clusters create ravensword --num-nodes=3 --machine-type=e2-stan
 <br>
 <br>
 e2-standard-4 (4 vCPUs, 16 GB memory)
+<br>
 e2-standard-4 (4 vCPUs, 16 GB memory)
+<br>
 e2-standard-4 (4 vCPUs, 16 GB memory)
