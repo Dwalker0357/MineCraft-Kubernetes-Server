@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server
+  annotations:
+    kubesailEditorUid: 020cc795-f13a-4254-b985-1ce71b52f0df
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      volumes:
+        - name: world
+          persistentVolumeClaim:
+            claimName: minecraft-world
+      containers:
+        - name: minecraft
+          image: itzg/minecraft-server
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: world
+              mountPath: /data
+          ports:
+            - name: game-port
+              containerPort: 25565
+              hostPort: 25565
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 4
+              memory: 10Gi
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minecraft-world
+  namespace: minecraft
+  selfLink: /api/v1/namespaces/minecraft/persistentvolumeclaims/minecraft-world
+  uid: d5b73e5d-4515-4875-b8f3-6ab4a1943c92
+  resourceVersion: "73357"
+  creationTimestamp: 2021-03-20T12:46:44Z
+  labels:
+    app: minecraft
+  annotations:
+    kubesailEditorUid: 7cfefb27-36b0-4112-b8af-d644c0b319b9
+    pv.kubernetes.io/bind-completed: yes
+    pv.kubernetes.io/bound-by-controller: yes
+    volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/gce-pd
+  finalizers:
+    - kubernetes.io/pvc-protection
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  volumeName: pvc-d5b73e5d-4515-4875-b8f3-6ab4a1943c92
+  storageClassName: standard
+  volumeMode: Filesystem
+status:
+  phase: Bound
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ravensword-server
+spec:
+  selector:
+    app: minecraft
+  ports: 
+  - protocol: TCP
+    port: 25565
+    targetPort: 25565
+  type: LoadBalancer
