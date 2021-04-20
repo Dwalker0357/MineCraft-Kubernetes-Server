@@ -29,10 +29,6 @@ gcloud container clusters create ravensword --num-nodes=3 --machine-type=e2-stan
 kubectl create -f https://byoc.kubesail.com/dwalker0357.yaml
 <br>
 <br>
-
-
-<h1>Vanilla V1:</h1>
-<br>
 <h2>Server Specs:</h2>
 <br>
 Ram: 10gb
